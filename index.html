@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=320, initial-scale=1">
+    <meta charset="utf-8">
+    <script type="text/javascript" src="jQuery 3.3.1.js"></script>
+    <style>
+      body {
+        background: url("fon.png") no-repeat center center fixed;
+        background-size: cover;
+      }
+      #right {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 175px;
+        font-size: 25px;
+        margin: 10px;
+        font-weight: bold;
+        background: rgba(59,84,255,.60);
+        text-align: center;
+        color: black;
+        border-radius: 5px;
+        padding: 10px;
+        display: none;
+      }
+      .cd {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 70%;
+        height: 75%;
+        text-align: center;
+        margin: auto;
+        border-radius: 10px;
+        background: rgba(255,228,218,.85);
+        display: none;
+      }
+      #tests {
+        width: 90%;
+        margin-left: 5%;
+        height: 80%;
+        overflow: auto;
+        margin-top: 20px;
+      }
+      .ts {
+          font-size: 20px;
+          cursor: pointer;
+          border: 3px inset blue;
+          border-radius: 5px;
+          display: inline-block;
+      }
+      #hh {
+        font-size: 30px;
+        color: #008400;
+        font-weight: bold;
+      }
+      #vibor span {
+          font-size: 35px;
+          display: inline-block;
+          border-radius: 20px;
+          background: yellow;
+          width: 85%;
+          padding: 10px;
+          cursor: pointer;
+      }
+      #variant {
+          position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 65%;
+        height: 100px;
+        text-align: center;
+        margin: auto;
+        border-radius: 10px;
+        background: red;
+        color: white;
+        padding-top: 20px;
+        display: none;
+        font-size: 20px;
+      }
+      #pech {
+          background: #f59542;
+          padding: 5px;
+          border: 2px solid black;
+          border-radius: 5px;
+          cursor: pointer;
+      }
+    .dalee {
+        background: #99a832;
+        padding: 13px;
+        border-radius: 10px;
+        color: #a83a32;
+        font-size: 30px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    .ret {
+        background: #3291a8;
+        padding: 13px;
+        border-radius: 10px;
+        color: #a83a32;
+        font-size: 30px;
+        cursor: pointer;
+        margin-right: 30px;
+        display: none;
+        font-weight: bold;
+    }
+    #ques {
+        color: white;
+        background: rgba(50, 133, 168, .85);
+    }
+    #result {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 70%;
+        height: 150px;
+        text-align: center;
+        margin: auto;
+        border-radius: 10px;
+        color: white;
+        padding-top: 30px;
+        display: none;
+        font-size: 25px;
+    }
+    #home {
+        background: #99a832;
+        padding: 13px;
+        border-radius: 10px;
+        color: #a83a32;
+        font-size: 23px;
+        cursor: pointer;
+    }
+    </style>
+    <script>
+    var pr = new Array();
+      $(document).ready(function() {
+          $(window).resize(function(){
+              $("#vibor span").css("margin-top", parseFloat($(".cd").css("height")) * 0.25);
+              $("#ques div").css("margin-top", parseFloat($(".cd").css("height")) * 0.25);
+          });
+          $("#test").show();
+        $.ajax({
+            type: "post",
+            url: "form.php",
+            dataType: "html",
+            data: ({type: "tests"}),
+            success: function(data){
+                while(data != ""){
+                    var name = decodeURI(data.substring(0, data.indexOf("("))).replace(/[+]/g, " ");
+                    var id = data.substring(data.indexOf("(") + 1, data.indexOf(")"));
+                    data = data.substring(data.indexOf("&") + 1, data.length);
+                    $("#tests").append("<span id='" + id + "' class='ts'>" + name + "</span>");
+                    $(".ts").click(function(){
+                        var id = $(this).attr("id");
+                        $(typetest(id));
+                    });
+                }
+            }
+        });
+      });
+      function typetest(id){
+          $("#test").hide();
+          $("#vibor").show();
+          $("#vibor span").css("margin-top", (parseFloat($(".cd").css("height")) - parseFloat($("#vibor span").css("height"))*2) / 3);
+           var v = parseFloat(id.substring(7,8));
+          $("#tt").click(function(){
+              $("#variant").show();
+          $("#vibor").hide();
+          for(var i = 1; i <= v; i++){
+              $("#sel").append("<option>" + i + "</option>");
+          }
+          $("#pech").click(function(){
+              var k = $("#sel").val();
+              for(var i = 1; i <= k; i++){
+              var a = document.createElement("a");
+              a.download = "Вариант " + i;
+              a.href = "tests/" + id + "/testp" + i + ".txt";
+              a.click();
+              }
+          });
+          });
+          $("#et").click(function(){
+              $(elec(id));
+          });
+          function elec(id){
+              do {
+              var ran = Math.round(Math.random() * v);
+              } while(ran != 1);
+              $.ajax({
+            type: "post",
+            url: "form.php",
+            dataType: "html",
+            data: ({type: "elec", id: id, v: ran}),
+            success: function(data){
+                $("#vibor").hide();
+                $("#ques").show();
+                var i = 0;
+                while(data!=""){
+                    var ques = decodeURI(data.substring(0, data.indexOf("["))).replace(/[+]/g, " ").replace(/%3F/g, "?").replace(/%2C/g, ",");
+                    $("#" + i + " .ques").text(ques);
+                    pr[i] = decodeURI(data.substring(data.indexOf("[") + 1, data.indexOf("]"))).replace(/[+]/g, " ").replace(/%3F/g, "?").replace(/%2C/g, ",");
+                    var v = data.substring(data.indexOf("]") + 1, data.indexOf("&")) + ";";
+                    for(var l = 0; l < 4; l++){
+                        var varia = decodeURI(v.substring(0, v.indexOf(";"))).replace(/[+]/g, " ").replace(/%3F/g, "?").replace(/%2C/g, ",");
+                        v = v.substring(v.indexOf(";") + 1, v.length);
+                        var val = l + 1;
+                        $("#" + i + " label:eq(" + l + ")").html('<input name="rad' + i + '" type="radio" value="' + val + '"/>' + varia);
+                    }
+                    data = data.substring(data.indexOf("&") + 1, data.length);
+                    i++;
+                    if(data != ""){
+                        var div = $("#0").clone();
+                    $(div).css("display", "none");
+                    $(div).attr("id", i);
+                    $("#" + i + " input").attr("name", "rad" + i);
+                    $("#ques").append(div);
+                    }
+                }
+                $("#ques div").css("margin-top", (parseFloat($(".cd").css("height")) - parseFloat($("#ques div").css("height"))) / 3);
+                $(".ques").css("font-size", parseFloat($(".cd").css("height"))/20);
+                $("#ques label").css("font-size", parseFloat($(".cd").css("height"))/25);
+                /*var text = "1-ый Вопрос" + $("#0 .ques").text() + "Варианты ответов " + $("#0 label:eq(0)").text() + " " + $("#0 label:eq(1)").text() + " " + $("#0 label:eq(2)").text() + " " + $("#0 label:eq(3)").text();
+                const message = new SpeechSynthesisUtterance();
+            message.lang = "ru-RU";
+            message.text = text;
+            utterThis.onboundary = function(event) {
+  console.log(event.name + ' boundary reached after ' + event.elapsedTime + ' seconds.');
+}
+            window.speechSynthesis.speak(message);*/
+                $(".ret").click(function(){
+                    var id = $("#ques div:hover").attr("id");
+                    $("#" + id).hide();
+                    id = parseInt(id) - 1;
+                    if(id == 0){
+                        $("#" + id).show();
+                        $(".ret").hide();
+                    } else {
+                        $("#" + id).show();
+                    }
+               });
+                $(".dalee").click(function(){
+                    var id = $("#ques div:hover").attr("id");
+                    $("#" + id).hide();
+                    id = parseInt(id) + 1;
+                    var l = $("#ques > div").length;
+                    if(l - 1 >= id){
+                        $("#" + id).show();
+                        $(".ret").show();
+                    } else {
+                        $("#ques").hide();
+                        $("#result").show();
+                      var m = 0;
+                        for(var i = 0; i < l; i++){
+                            var val = $("input[name='rad" + i + "']:checked").val();
+                            if(val == pr[i]){
+                                m++;
+                            }
+                        }
+                        var res = Math.round(m / l * 100);
+                        $("#res").text(res + " %");
+                        if(res >= 90) {
+                            $("#result").css("background", "green");
+                        } else if(res >= 70){
+                            $("#result").css("background", "yellow");
+                            $("#res").css("color", "black");
+                        } else {
+                            $("#result").css("background", "red");
+                        }
+                        $("#home").click(function(){
+                            document.location.href = "index.html";
+                        });
+                    }
+                });
+            }
+            });
+          }
+      }
+    </script>
+  </head>
+  <body>
+    <div id="right">
+        <span id="newtest">Создать тест</span>
+    </div>
+    <div id="center">
+      <div id="test" class="cd">
+        <span id="hh">Тесты</span>
+        <div id="tests">
+          
+        </div>
+      </div>
+      <div id="vibor" class="cd">
+        <span id="tt">Текстовый вариант</span>
+        <span id="et">Электронный вариант</span>
+      </div>
+      <div id="variant">
+        Выберите количество вариантов: <select id="sel"></select><br/></br/>
+        <span id="pech">Готово</span>
+      </div>
+      <div id="ques" class="cd">
+        <div id="0">
+            <span class="ques"></span><br/><br/>
+            <label></label><br/><br/>
+            <label></label><br/><br/>
+            <label></label><br/><br/>
+            <label></label><br/><br/><br/>
+            <span class="ret">Назад</span><span class="dalee">Далее</span>
+        </div>
+      </div>
+      <div id="result">
+            Результат: <span id="res"></span><br/><br/>
+            <span id="home">На главную</span>
+      </div>
+    </div>
+  </body>
+</html>
